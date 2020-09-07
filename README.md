@@ -5,7 +5,7 @@
         <img align="right" src="https://i.imgur.com/ABJeWPY.png" height="220" width="220">
     </a>
     <h1>Minerva-Home</h1>
-    <p><b>a modular of minerva plugin based on the eureka framework</b></p>
+    <p><b>a module of minerva plugin based on the eureka framework</b></p>
     <hr>
     <h2>Usage</h2>
 </body>
