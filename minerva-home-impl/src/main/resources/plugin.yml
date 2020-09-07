@@ -1,6 +1,0 @@
-name: ${project.name}
-author: ${minecraft.plugin.author}
-version: ${minecraft.plugin.version}
-main: ${minecraft.plugin.main}
-depend: [minerva]
-api-version: 1.13

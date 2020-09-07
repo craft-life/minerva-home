@@ -1,8 +1,5 @@
 package br.com.craftlife.minerva.home.command;
 
-import br.com.craftlife.eureka.injector.config.Config;
-import br.com.craftlife.eureka.injector.resource.InjectMessage;
-import br.com.craftlife.eureka.resource.messages.Message;
 import br.com.craftlife.minerva.home.model.Home;
 import br.com.craftlife.minerva.home.model.HomeId;
 import br.com.craftlife.minerva.home.model.HomeType;
@@ -27,37 +24,6 @@ public class HomeCommand extends BaseCommand {
     @Inject
     private HomeRepository homeBD;
 
-    @InjectMessage("mensagens.tipo_invalido")
-    private Message tipoInvalidoMessage;
-
-    @InjectMessage("mensagens.nome_invalido")
-    private Message nomeInvalidoMessage;
-
-    @InjectMessage("mensagens.sem_permissao")
-    private Message semPermissaoMessage;
-
-    @InjectMessage("mensagens.home_definida")
-    private Message homeDefinidaMessage;
-
-    @InjectMessage("mensagens.atingiulimit")
-    private Message atingiuLimitMessage;
-
-    @InjectMessage("mensagens.home_inexistente")
-    private Message homeInexistenteMessage;
-
-    @InjectMessage("mensagens.home_deletada")
-    private Message homeDeletadaMessage;
-
-    @InjectMessage("mensagens.list_homes")
-    private Message listHomesMessage;
-
-    @InjectMessage("mensagens.sem_homes")
-    private Message semHomesMessage;
-
-
-    @Config("limit")
-    private Integer limit;
-
     @Default
     @Description("go to your home or someone else's")
     @Subcommand("ir")
@@ -75,8 +41,8 @@ public class HomeCommand extends BaseCommand {
     public void homeSet(Player player, @co.aikar.commands.annotation.Optional String name, @co.aikar.commands.annotation.Optional String typeName) {
         val homeName = StringUtils.defaultIfBlank(name, "principal");
         val type = typeName == null ? HomeType.PRIVADA : HomeType.valueOf(typeName.toUpperCase());
-        if(homeBD.listarPorDono(player.getName()).size() >= limit && !player.hasPermission("home.bypass.limite")) {
-            player.spigot().sendMessage(MineDown.parse(atingiuLimitMessage.colored().set("limit", "" + limit).getSource()));
+        if(homeBD.listarPorDono(player.getName()).size() >= 3 && !player.hasPermission("home.bypass.limite")) {
+            player.spigot().sendMessage(MineDown.parse("&cVocê atingiu o limite de 3 homes compre VIP e tenha homes ilimitadas"));
             return;
         }
         HomeId id = getIdFromInput(player, homeName);
@@ -85,11 +51,11 @@ public class HomeCommand extends BaseCommand {
         home.setHomeType(type);
         home.setLocation(player.getPlayer().getLocation().clone());
         if(!player.getName().equalsIgnoreCase(id.getOwner()) && !player.hasPermission("home.set.others")) {
-            player.spigot().sendMessage(MineDown.parse(atingiuLimitMessage.colored().set("limit", "" + limit).getSource()));
+            player.spigot().sendMessage(MineDown.parse("&cVocê atingiu o limite de 3 homes compre VIP e tenha homes ilimitadas"));
             return;
         }
         homeBD.altera(home);
-        player.spigot().sendMessage(MineDown.parse(homeDefinidaMessage.colored().set("home", home.getId().getName()).getSource()));
+        player.spigot().sendMessage(MineDown.parse("&aHome definida com sucesso!"));
     }
 
 
@@ -122,10 +88,10 @@ public class HomeCommand extends BaseCommand {
             );
             msg.color(getTypeColor(type)).then(", ").color(ChatColor.GOLD);
         });
-        player.spigot().sendMessage(MineDown.parse(listHomesMessage.set("player", playerName).getSource()));
+        player.spigot().sendMessage(MineDown.parse("&aLista de homes : (clique no nome para ir)"));
         msg.send(player.getPlayer());
         if (homes.isEmpty()) {
-            player.spigot().sendMessage(MineDown.parse(semHomesMessage.set("player", playerName).getSource()));
+            player.spigot().sendMessage(MineDown.parse("&cnão possui nenhuma home."));
         }
 
     }
@@ -144,7 +110,7 @@ public class HomeCommand extends BaseCommand {
 
     private void deleteAndSendMessage(Player player, HomeId id, Home home) {
         homeBD.remove(home);
-        player.spigot().sendMessage(MineDown.parse(homeDeletadaMessage.set("nome", id.getName()).getSource()));
+        player.spigot().sendMessage(MineDown.parse("&cA home foi deletada com sucesso!"));
     }
 
     private static final Pattern PATTTERN = Pattern.compile("[^a-zA-Z0-9_]+");
