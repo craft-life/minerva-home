@@ -1,0 +1,7 @@
+
+.idea
+.classpath
+.project
+*.iml
+target
+/minerva-module-impl/dependency-reduced-pom.xml
